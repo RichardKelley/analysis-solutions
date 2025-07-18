@@ -1,5 +1,5 @@
 import Mathlib.Tactic
-import Analysis.Section_2_1
+import AnalysisSolutions.Section_2_1
 
 /-!
 # Analysis I, Section 2.2
@@ -75,6 +75,7 @@ lemma Nat.add_succ (n m:Nat) : n + (m++) = (n + m)++ := by
 
 
 /-- n++ = n + 1 (Why?). Compare with Mathlib's `Nat.succ_eq_add_one` -/
+-- ex
 theorem Nat.succ_eq_add_one (n:Nat) : n++ = n + 1 := by
   sorry
 
@@ -89,6 +90,7 @@ theorem Nat.add_comm (n m:Nat) : n + m = m + n := by
 
 /-- Proposition 2.2.5 (Addition is associative) / Exercise 2.2.1
     Compare with Mathlib's `Nat.add_assoc` -/
+-- ex
 theorem Nat.add_assoc (a b c:Nat) : (a + b) + c = a + (b + c) := by
   sorry
 
@@ -160,6 +162,7 @@ extracts a witness `x` and a proof `hx : P x` of the property from a hypothesis 
 #check ExistsUnique.unique
 
 /-- Lemma 2.2.10 (unique predecessor) / Exercise 2.2.2 -/
+-- ex
 lemma Nat.uniq_succ_eq (a:Nat) (ha: a.IsPos) : ∃! b, b++ = a := by
   sorry
 
@@ -204,25 +207,30 @@ example : (8:Nat) > 5 := by
   decide
 
 /-- Compare with Mathlib's `Nat.lt_succ_self`-/
+-- ex
 theorem Nat.succ_gt_self (n:Nat) : n++ > n := by
   sorry
 
 /-- Proposition 2.2.12 (Basic properties of order for natural numbers) / Exercise 2.2.3
 
 (a) (Order is reflexive). Compare with Mathlib's `Nat.le_refl`-/
+-- ex
 theorem Nat.ge_refl (a:Nat) : a ≥ a := by
   sorry
 
 /-- (b) (Order is transitive).  The `obtain` tactic will be useful here.
     Compare with Mathlib's `Nat.le_trans` -/
+-- ex
 theorem Nat.ge_trans {a b c:Nat} (hab: a ≥ b) (hbc: b ≥ c) : a ≥ c := by
   sorry
 
 /-- (c) (Order is anti-symmetric). Compare with Mathlib's `Nat.le_antisymm`  -/
+-- ex
 theorem Nat.ge_antisymm {a b:Nat} (hab: a ≥ b) (hba: b ≥ a) : a = b := by
   sorry
 
 /-- (d) (Addition preserves order).  Compare with Mathlib's `Nat.add_le_add_right`  -/
+-- ex
 theorem Nat.add_ge_add_right (a b c:Nat) : a ≥ b ↔ a + c ≥ b + c := by
   sorry
 
@@ -238,10 +246,12 @@ theorem Nat.add_le_add_right (a b c:Nat) : a ≤ b ↔ a + c ≤ b + c := add_ge
 theorem Nat.add_le_add_left (a b c:Nat) : a ≤ b ↔ c + a ≤ c + b := add_ge_add_left _ _ _
 
 /-- (e) a < b iff a++ ≤ b.  Compare with Mathlib's `Nat.succ_le_iff` -/
+-- ex
 theorem Nat.lt_iff_succ_le (a b:Nat) : a < b ↔ a++ ≤ b := by
   sorry
 
 /-- (f) a < b if and only if b = a + d for positive d. -/
+-- ex
 theorem Nat.lt_iff_add_pos (a b:Nat) : a < b ↔ ∃ d:Nat, d.IsPos ∧ b = a + d := by
   sorry
 
@@ -263,6 +273,7 @@ theorem Nat.not_lt_of_gt (a b:Nat) : a < b ∧ a > b → False := by
 
 /-- Proposition 2.2.13 (Trichotomy of order for natural numbers) / Exercise 2.2.4
     Compare with Mathlib's `trichotomous` -/
+-- ex
 theorem Nat.trichotomous (a b:Nat) : a < b ∨ a = b ∨ a > b := by
   -- this proof is written to follow the structure of the original text.
   revert a; apply induction
@@ -289,6 +300,7 @@ theorem Nat.trichotomous (a b:Nat) : a < b ∨ a = b ∨ a > b := by
 
   Compare with Mathlib's `Nat.decLe`
 -/
+-- ex
 def Nat.decLe : (a b : Nat) → Decidable (a ≤ b)
   | 0, b => by
     apply isTrue
@@ -328,6 +340,7 @@ instance Nat.isOrderedAddMonoid : IsOrderedAddMonoid Nat where
 /-- Proposition 2.2.14 (Strong principle of induction) / Exercise 2.2.5
     Compare with Mathlib's `Nat.strong_induction_on`
 -/
+-- ex
 theorem Nat.strong_induction {m₀:Nat} {P: Nat → Prop}
   (hind: ∀ m, m ≥ m₀ → (∀ m', m₀ ≤ m' ∧ m' < m → P m') → P m) :
     ∀ m, m ≥ m₀ → P m := by
@@ -335,6 +348,7 @@ theorem Nat.strong_induction {m₀:Nat} {P: Nat → Prop}
 
 /-- Exercise 2.2.6 (backwards induction)
     Compare with Mathlib's `Nat.decreasingInduction` -/
+-- ex
 theorem Nat.backwards_induction {n:Nat} {P: Nat → Prop}
   (hind: ∀ m, P (m++) → P m) (hn: P n) :
     ∀ m, m ≤ n → P m := by
@@ -342,6 +356,7 @@ theorem Nat.backwards_induction {n:Nat} {P: Nat → Prop}
 
 /-- Exercise 2.2.7 (induction from a starting point)
     Compare with Mathlib's `Nat.le_induction` -/
+-- ex
 theorem Nat.induction_from {n:Nat} {P: Nat → Prop} (hind: ∀ m, P m → P (m++)) :
     P n → ∀ m, m ≥ n → P m := by
   sorry

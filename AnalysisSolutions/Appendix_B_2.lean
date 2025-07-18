@@ -1,5 +1,5 @@
 import Mathlib.Tactic
-import Analysis.Appendix_B_1
+import AnalysisSolutions.Appendix_B_1
 
 /-!
 # Analysis I, Appendix B.2
