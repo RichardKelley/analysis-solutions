@@ -176,6 +176,12 @@ theorem natCast_surjective (P : PeanoAxioms) : Function.Surjective P.natCast := 
     use k+1
     rw [natCast, hk]
 
+/-
+The Equiv class used below has a good overview here:
+
+https://b-mehta.github.io/formalising-mathematics-notes/Part_1/structures.html
+-/
+
 /-- The notion of an equivalence between two structures obeying the Peano axioms.
     The symbol `≃` is an alias for Mathlib's `Equiv` class; for instance `P.Nat ≃ Q.Nat` is
     an alias for `_root_.Equiv P.Nat Q.Nat`. -/
