@@ -249,8 +249,26 @@ theorem Equiv.uniq {P Q : PeanoAxioms} (equiv1 equiv2 : PeanoAxioms.Equiv P Q) :
 
 /-- A sample result: recursion is well-defined on any structure obeying the Peano axioms-/
 -- ex
+/-
+  we want to use recurse (really Nat.rec) as we defined on Chapter2.Nat, but we need to
+  translate to P.Nat first....
+-/
 theorem Nat.recurse_uniq {P : PeanoAxioms} (f: P.Nat → P.Nat → P.Nat) (c: P.Nat) :
     ∃! (a: P.Nat → P.Nat), a P.zero = c ∧ ∀ n, a (P.succ n) = f n (a n) := by
-  sorry
+  let recurse_fn := fun (n:P.Nat) => n  -- TODO fixme
+  apply existsUnique_of_exists_of_unique
+  · use recurse_fn
+    sorry
+  · intros y₁ y₂ p₁ p₂
+    ext n
+    revert n
+    apply P.induction
+    · have h₁ := p₁.left
+      have h₂ := p₂.left
+      rw [h₁, h₂]
+    · intros n ih
+      have h₁ := p₁.right
+      have h₂ := p₂.right
+      rw [h₁, h₂, ih]
 
 end PeanoAxioms
