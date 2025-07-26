@@ -530,18 +530,34 @@ theorem SetTheory.Set.subset_def (X Y:Set) : X ⊆ Y ↔ ∀ x, x ∈ X → x �
 theorem SetTheory.Set.ssubset_def (X Y:Set) : X ⊂ Y ↔ (X ⊆ Y ∧ X ≠ Y) := by rfl
 
 
-/-
+
 /-- Remark 3.1.15 -/
 -- ex
-theorem SetTheory.Set.subset_congr_left {A A' B:Set} (hAA':A = A') (hAB: A ⊆ B) : A' ⊆ B := by sorry
+theorem SetTheory.Set.subset_congr_left {A A' B:Set} (hAA':A = A') (hAB: A ⊆ B) : A' ⊆ B := by
+  rw [hAA'] at hAB
+  exact hAB
+
 
 /-- Examples 3.1.16 -/
 -- ex
-theorem SetTheory.Set.subset_self (A:Set) : A ⊆ A := by sorry
+theorem SetTheory.Set.subset_self (A:Set) : A ⊆ A := by
+  rw [subset_def]
+  simp
+
 
 /-- Examples 3.1.16 -/
 -- ex
-theorem SetTheory.Set.empty_subset (A:Set) : ∅ ⊆ A := by sorry
+-- This is how I would argue it on paper. Maybe a slicker way?
+theorem SetTheory.Set.empty_subset (A:Set) : ∅ ⊆ A := by
+  by_contra! h
+  rw [subset_def] at h
+  push_neg at h
+  obtain ⟨x, hx⟩ := h
+  have impossible := hx.left
+  apply emptyset_mem at impossible
+  exact impossible
+
+
 
 /-- Proposition 3.1.17 (Partial ordering by set inclusion) -/
 theorem SetTheory.Set.subset_trans {A B C:Set} (hAB:A ⊆ B) (hBC:B ⊆ C) : A ⊆ C := by
@@ -556,12 +572,30 @@ theorem SetTheory.Set.subset_trans {A B C:Set} (hAB:A ⊆ B) (hBC:B ⊆ C) : A �
 /-- Proposition 3.1.17 (Partial ordering by set inclusion) -/
 -- ex
 theorem SetTheory.Set.subset_antisymm (A B:Set) (hAB:A ⊆ B) (hBA:B ⊆ A) : A = B := by
-  sorry
+  rw [ext_iff]
+  intro x
+  constructor
+  · rw [subset_def] at hAB; apply hAB
+  · rw [subset_def] at hBA; apply hBA
+
 
 /-- Proposition 3.1.17 (Partial ordering by set inclusion) -/
 -- ex
 theorem SetTheory.Set.ssubset_trans (A B C:Set) (hAB:A ⊂ B) (hBC:B ⊂ C) : A ⊂ C := by
-  sorry
+  rw [ssubset_def] at *
+  have hAB_subset := hAB.left
+  have hAB_ne := hAB.right
+  have hBC_subset := hBC.left
+  have hBC_ne := hBC.right
+  constructor
+  · apply subset_trans hAB_subset hBC_subset
+  · by_contra! h
+    rw [←h] at hBC_subset
+    have hAB_eq : A = B := by
+      apply subset_antisymm
+      · exact hAB_subset
+      · exact hBC_subset
+    contradiction
 
 
 /--
@@ -637,13 +671,38 @@ theorem SetTheory.Set.specification_axiom'' {A:Set} (P: A → Prop) (x:Object) :
   assumption
 
 -- ex
-theorem SetTheory.Set.specify_subset {A:Set} (P: A → Prop) : A.specify P ⊆ A := by sorry
+theorem SetTheory.Set.specify_subset {A:Set} (P: A → Prop) : A.specify P ⊆ A := by
+  rw [subset_def]
+  intro x h
+  use specification_axiom h
 
 /-- This exercise may require some understanding of how  subtypes are implemented in Lean. -/
 -- ex
 theorem SetTheory.Set.specify_congr {A A':Set} (hAA':A = A') {P: A → Prop} {P': A' → Prop}
   (hPP': (x:Object) → (h:x ∈ A) → (h':x ∈ A') → P ⟨ x, h⟩ ↔ P' ⟨ x, h'⟩ ) :
-    A.specify P = A'.specify P' := by sorry
+    A.specify P = A'.specify P' := by
+    dsimp [specify]
+    rw [ext_iff]
+    intro x
+    constructor
+    · intro h
+      rw [specification_axiom''] at h
+      obtain ⟨h, hP⟩ := h
+      have h' : x ∈ A' := by
+        rw [hAA'] at h
+        exact h
+      have hP' : P' ⟨x, h'⟩ := by
+       rw [hPP' x h h'] at hP; exact hP
+      rw [specification_axiom'']
+      use h'
+    · intro h
+      rw [specification_axiom''] at h
+      obtain ⟨h', hP'⟩ := h
+      have h : x ∈ A := by rw [←hAA'] at h'; exact h'
+      have hP : P ⟨x, h⟩ := by
+        rw [← hPP' x h h'] at hP'; exact hP'
+      rw [specification_axiom'']
+      use h
 
 instance SetTheory.Set.instIntersection : Inter Set where
   inter X Y := X.specify (fun x ↦ x.val ∈ Y)
@@ -681,40 +740,123 @@ theorem SetTheory.Set.mem_sdiff (x:Object) (X Y:Set) : x ∈ (X \ Y) ↔ (x ∈ 
 
 /-- Proposition 3.1.27(d) / Exercise 3.1.6 -/
 -- ex
-theorem SetTheory.Set.inter_comm (A B:Set) : A ∩ B = B ∩ A := by sorry
+theorem SetTheory.Set.inter_comm (A B:Set) : A ∩ B = B ∩ A := by
+  rw [ext_iff]
+  intro x
+  constructor
+  · intro h
+    rw [mem_inter]
+    rw [mem_inter, and_comm] at h
+    exact h
+  · intro h
+    rw [mem_inter]
+    rw [mem_inter, and_comm] at h
+    exact h
 
 /-- Proposition 3.1.27(b) -/
 -- ex
-theorem SetTheory.Set.subset_union {A X: Set} (hAX: A ⊆ X) : A ∪ X = X := by sorry
+theorem SetTheory.Set.subset_union {A X: Set} (hAX: A ⊆ X) : A ∪ X = X := by
+  rw [ext_iff]
+  intro x
+  constructor
+  · intro h
+    rw [mem_union] at h
+    rcases h with ha|hx
+    · apply hAX at ha; exact ha
+    · exact hx
+  · intro h
+    rw [mem_union]
+    right; exact h
 
 /-- Proposition 3.1.27(b) -/
 -- ex
-theorem SetTheory.Set.union_subset {A X: Set} (hAX: A ⊆ X) : X ∪ A = X := by sorry
+theorem SetTheory.Set.union_subset {A X: Set} (hAX: A ⊆ X) : X ∪ A = X := by
+  rw [union_comm]
+  apply subset_union
+  exact hAX
+
 
 /-- Proposition 3.1.27(c) -/
 -- ex
 theorem SetTheory.Set.inter_self (A:Set) : A ∩ A = A := by
-  sorry
+  rw [ext_iff]
+  intro x
+  constructor
+  · intro h
+    rw [mem_inter] at h
+    exact h.left
+  · intro h
+    rw [mem_inter]
+    constructor
+    · exact h
+    · exact h
 
 /-- Proposition 3.1.27(e) -/
 -- ex
-theorem SetTheory.Set.inter_assoc (A B C:Set) : (A ∩ B) ∩ C = A ∩ (B ∩ C) := by sorry
+theorem SetTheory.Set.inter_assoc (A B C:Set) : (A ∩ B) ∩ C = A ∩ (B ∩ C) := by
+  rw [ext_iff]
+  intro x
+  rw [mem_inter, mem_inter, mem_inter, mem_inter]
+  apply and_assoc
+
+
 
 /-- Proposition 3.1.27(f) -/
 -- ex
 theorem  SetTheory.Set.inter_union_distrib_left (A B C:Set) :
     A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) := by
-  sorry
+  rw [ext_iff]
+  intro x
+  rw [mem_inter, mem_union, mem_union, mem_inter, mem_inter]
+  constructor
+  · intro h
+    have h₀ := h.left
+    have h₁ := h.right
+    rcases h₁ with hl|hr
+    · left; apply (And.intro h₀ hl)
+    · right; apply (And.intro h₀ hr)
+  · intro h
+    rcases h with hl|hr
+    · have hl₀ := hl.left
+      have hl₁ := hl.right
+      constructor
+      · exact hl₀
+      · left; exact hl₁
+    · have hr₀ := hr.left
+      have hr₁ := hr.right
+      constructor
+      · exact hr₀
+      · right; exact hr₁
 
 /-- Proposition 3.1.27(f) -/
 -- ex
 theorem  SetTheory.Set.union_inter_distrib_left (A B C:Set) :
     A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) := by
-  sorry
+  rw [ext_iff]
+  intro x
+  rw [mem_union, mem_inter, mem_inter, mem_union, mem_union]
+  constructor
+  · intro h
+    rcases h with hl|hr
+    · constructor
+      · left; exact hl
+      · left; exact hl
+    · constructor
+      · right; exact hr.left
+      · right; exact hr.right
+  · intro h
+    rcases h with ⟨(ha|hb), (ha|hc)⟩
+    · left; exact ha
+    · left; exact ha
+    · left; exact ha
+    · right; apply (And.intro hb hc)
 
 /-- Proposition 3.1.27(f) -/
 -- ex
 theorem SetTheory.Set.union_compl {A X:Set} (hAX: A ⊆ X) : A ∪ (X \ A) = X := by sorry
+
+
+/-
 
 /-- Proposition 3.1.27(f) -/
 -- ex
