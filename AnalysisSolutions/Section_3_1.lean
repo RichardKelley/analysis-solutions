@@ -1518,5 +1518,3 @@ theorem SetTheory.Set.coe_Disjoint (X Y: Set) :
     Disjoint (X : _root_.Set Object) (Y : _root_.Set Object) ↔ Disjoint X Y := by sorry
 
 end Chapter3
-
--/
