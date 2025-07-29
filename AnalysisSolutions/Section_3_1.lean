@@ -1431,12 +1431,45 @@ theorem SetTheory.Set.subset_inter_subset {A B A' B':Set} (hA'A: A' ⊆ A) (hB'B
 /-- Exercise 3.1.12.-/
 -- ex
 theorem SetTheory.Set.subset_diff_subset_counter :
-    ∃ (A B A' B':Set), (A' ⊆ A) ∧ (B' ⊆ B) ∧ ¬ (A' \ B') ⊆ (A \ B) := by sorry
+    ∃ (A B A' B':Set), (A' ⊆ A) ∧ (B' ⊆ B) ∧ ¬ (A' \ B') ⊆ (A \ B) := by
+    exists {1,2,3}
+    exists {1,2,3}
+    exists {1,2}
+    exists {3}
+    constructor
+    · rw [subset_def]
+      simp
+    · constructor
+      · rw [subset_def]
+        simp
+      · rw [subset_def]
+        simp
 
 /-
   Final part of Exercise 3.1.12: state and prove a reasonable substitute positive result for the
   above theorem that involves set differences.
 -/
+theorem SetTheory.Set.proper_subset_diff {A A' B B' : Set} (ha : A' ⊆ A) (hb : B' ⊆ B) (hinter : (A ∩ (B\B')) = (∅:Set)) :
+  (A' \ B') ⊆ (A\B) := by
+  rw [subset_def]
+  intro x h₁
+  rw [mem_sdiff] at h₁
+  rw [mem_sdiff]
+  have hxA : x ∈ A := by apply ha; exact h₁.left
+  constructor
+  · exact hxA
+  · by_contra! hb
+    have hxBB' : x ∈ (B \ B') := by
+      simp
+      constructor
+      exact hb; exact h₁.right
+    rw [ext_iff] at hinter
+    have hxABB' : x ∈ A ∩ (B \ B') := by
+      simp only [mem_inter]
+      apply And.intro hxA hxBB'
+    rw [hinter] at hxABB'
+    apply not_mem_empty at hxABB'
+    exact hxABB'
 
 /-- Exercise 3.1.13 -/
 -- ex
