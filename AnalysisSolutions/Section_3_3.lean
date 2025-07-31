@@ -1,6 +1,6 @@
 import Mathlib.Tactic
-import Analysis.Section_3_1
-import Analysis.Tools.ExistsUnique
+import AnalysisSolutions.Section_3_1
+import AnalysisSolutions.Tools.ExistsUnique
 
 /-!
 # Analysis I, Section 3.3
@@ -225,7 +225,10 @@ example : (fun x:ℝ ↦ (x:ℝ)) ≠ (fun x:ℝ ↦ |(x:ℝ)|) := by
 abbrev SetTheory.Set.f_3_3_11 (X:Set) : Function (∅:Set) X :=
   Function.mk (fun _ _ ↦ True) (by intro ⟨ x,hx ⟩; simp at hx)
 
-theorem SetTheory.Set.empty_function_unique {X: Set} (f g: Function (∅:Set) X) : f = g := by sorry
+-- ex
+theorem SetTheory.Set.empty_function_unique {X: Set} (f g: Function (∅:Set) X) : f = g := by
+  rw [Function.eq_iff]
+  simp
 
 /-- Definition 3.3.13 (Composition) -/
 noncomputable abbrev Function.comp {X Y Z: Set} (g: Function Y Z) (f: Function X Y) :
