@@ -437,11 +437,21 @@ theorem Function.inverse_eq {X Y: Set} [Nonempty X] {f: Function X Y} (h: f.bije
   Exercise 3.3.1.  Although a proof operating directly on functions would be shorter,
   the spirit of the exercise is to show these using the `Function.eq_iff` definition.
 -/
-theorem Function.refl {X Y:Set} (f: Function X Y) : f = f := by sorry
+theorem Function.refl {X Y:Set} (f: Function X Y) : f = f := by
+  rewrite [eq_iff]
+  simp
 
-theorem Function.symm {X Y:Set} (f g: Function X Y) : f = g ↔ g = f := by sorry
+theorem Function.symm {X Y:Set} (f g: Function X Y) : f = g ↔ g = f := by
+  constructor
+  · intro h
+    symm; exact h
+  · intro h
+    symm; exact h
 
-theorem Function.trans {X Y:Set} {f g h: Function X Y} (hfg: f = g) (hgh: g = h) : f = h := by sorry
+theorem Function.trans {X Y:Set} {f g h: Function X Y} (hfg: f = g) (hgh: g = h) : f = h := by
+  rw [eq_iff] at *
+  intro x
+  rw [hfg, hgh]
 
 theorem Function.comp_congr {X Y Z:Set} {f f': Function X Y} (hff': f = f') {g g': Function Y Z}
   (hgg': g = g') : g ○ f = g' ○ f' := by sorry
